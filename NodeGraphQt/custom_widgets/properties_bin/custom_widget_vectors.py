@@ -25,7 +25,7 @@ class _PropVector(BaseProperty):
     def _add_item(self, index):
         _ledit = _NumberValueEdit()
         _ledit.index = index
-        _ledit.valueChanged.connect(
+        _ledit.value_changed.connect(
             lambda: self._on_value_change(_ledit.get_value(), _ledit.index)
         )
 
@@ -38,7 +38,7 @@ class _PropVector(BaseProperty):
             if index is not None:
                 self._value = list(self._value)
                 self._value[index] = value
-            self.value_changed.emit(self.toolTip(), self._value)
+            self.value_changed.emit(self.get_name(), self._value)
 
     def _update_items(self):
         if not isinstance(self._value, (list, tuple)):
@@ -51,8 +51,44 @@ class _PropVector(BaseProperty):
                 self._items[index].set_value(value)
 
     def set_data_type(self, data_type):
+        """
+        Sets the input line edit fields to either display in float or int.
+
+        Args:
+            data_type(int or float): int or float data type object.
+        """
         for item in self._items:
             item.set_data_type(data_type)
+
+    def set_steps(self, steps):
+        """
+        Sets the step items in the MMB context menu.
+
+        Args:
+            steps (list[int] or list[float]): list of ints or floats.
+        """
+        for item in self._items:
+            item.set_steps(steps)
+
+    def set_min(self, value):
+        """
+        Set the minimum range for the input fields.
+
+        Args:
+            value (int or float): minimum range value.
+        """
+        for item in self._items:
+            item.set_min(value)
+
+    def set_max(self, value):
+        """
+        Set the maximum range for the input fields.
+
+        Args:
+            value (int or float): maximum range value.
+        """
+        for item in self._items:
+            item.set_max(value)
 
     def get_value(self):
         return self._value

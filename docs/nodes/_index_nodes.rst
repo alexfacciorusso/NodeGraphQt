@@ -7,8 +7,8 @@ Nodes
     :caption: Node Classes
     :name: nodestoc
     :maxdepth: 2
+    :titlesonly:
 
-    Port
     NodeObject
     BackdropNode
     BaseNode

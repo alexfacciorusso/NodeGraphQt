@@ -372,6 +372,8 @@ class NodeItem(AbstractNodeItem):
         widget_width = 0.0
         widget_height = 0.0
         for widget in self._widgets.values():
+            if not widget.isVisible():
+                continue
             w_width = widget.boundingRect().width()
             w_height = widget.boundingRect().height()
             if w_width > widget_width:
@@ -415,6 +417,8 @@ class NodeItem(AbstractNodeItem):
         widget_width = 0.0
         widget_height = 0.0
         for widget in self._widgets.values():
+            if not widget.isVisible():
+                continue
             if widget.boundingRect().width() > widget_width:
                 widget_width = widget.boundingRect().width()
             widget_height += widget.boundingRect().height()
@@ -511,6 +515,8 @@ class NodeItem(AbstractNodeItem):
         inputs = [p for p in self.inputs if p.isVisible()]
         outputs = [p for p in self.outputs if p.isVisible()]
         for widget in self._widgets.values():
+            if not widget.isVisible():
+                continue
             widget_rect = widget.boundingRect()
             if not inputs:
                 x = rect.left() + 10
@@ -531,11 +537,15 @@ class NodeItem(AbstractNodeItem):
         y = rect.center().y() + v_offset
         widget_height = 0.0
         for widget in self._widgets.values():
+            if not widget.isVisible():
+                continue
             widget_rect = widget.boundingRect()
             widget_height += widget_rect.height()
         y -= widget_height / 2
 
         for widget in self._widgets.values():
+            if not widget.isVisible():
+                continue
             widget_rect = widget.boundingRect()
             x = rect.center().x() - (widget_rect.width() / 2)
             widget.widget().setTitleAlign('center')
@@ -761,15 +771,21 @@ class NodeItem(AbstractNodeItem):
         for w in self._widgets.values():
             w.widget().setVisible(visible)
 
+        # port text is not visible in vertical layout.
+        if self.layout_direction is LayoutDirectionEnum.VERTICAL.value:
+            port_text_visible = False
+        else:
+            port_text_visible = visible
+
         # input port text visibility.
         for port, text in self._input_items.items():
             if port.display_name:
-                text.setVisible(visible)
+                text.setVisible(port_text_visible)
 
         # output port text visibility.
         for port, text in self._output_items.items():
             if port.display_name:
-                text.setVisible(visible)
+                text.setVisible(port_text_visible)
 
         self._text_item.setVisible(visible)
         self._icon_item.setVisible(visible)
@@ -858,6 +874,16 @@ class NodeItem(AbstractNodeItem):
             NodeTextItem: node text object.
         """
         return self._text_item
+
+    @property
+    def icon_item(self):
+        """
+        Get the node icon qgraphics item.
+
+        Returns:
+            QtWidgets.QGraphicsPixmapItem: node icon object.
+        """
+        return self._icon_item
 
     @property
     def inputs(self):
@@ -1023,7 +1049,8 @@ class NodeItem(AbstractNodeItem):
 
     def from_dict(self, node_dict):
         super(NodeItem, self).from_dict(node_dict)
-        widgets = node_dict.pop('widgets', {})
-        for name, value in widgets.items():
-            if self._widgets.get(name):
-                self._widgets[name].set_value(value)
+        custom_prop = node_dict.get('custom') or {}
+        for prop_name, value in custom_prop.items():
+            prop_widget = self._widgets.get(prop_name)
+            if prop_widget:
+                prop_widget.set_value(value)

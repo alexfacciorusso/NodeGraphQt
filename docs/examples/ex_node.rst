@@ -79,7 +79,7 @@ To you update the widget you can call the
  - ``QCheckBox``: :meth:`NodeGraphQt.BaseNode.add_checkbox`
  - ``QLineEdit``: :meth:`NodeGraphQt.BaseNode.add_text_input`
 
-See: :ref:`Node Widgets` for more node widget types.
+See: :ref:`Embedded Node Widgets` for more node widget types.
 
 |
 
@@ -192,6 +192,10 @@ Here's an example to embed a custom widget where we subclass the
             # add custom widget to node with "node.view" as the parent.
             node_widget = NodeWidgetWrapper(self.view)
             self.add_custom_widget(node_widget, tab='Custom')
+
+To hide/show the embedded widget on a :class:`NodeGraphQt.BaseNode` checkout the
+:meth:`NodeGraphQt.BaseNode.hide_widget` and :meth:`NodeGraphQt.BaseNode.show_widget`
+functions.
 
 
 Connecting Nodes

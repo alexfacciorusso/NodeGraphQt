@@ -14,6 +14,7 @@ __doc__ = """
 
 # ================================== PRIVATE ===================================
 
+MIME_TYPE = 'nodegraphqt/nodes'
 URI_SCHEME = 'nodegraphqt://'
 URN_SCHEME = 'nodegraphqt::'
 
@@ -24,6 +25,7 @@ ICON_DOWN_ARROW = os.path.join(ICON_PATH, 'down_arrow.png')
 ICON_NODE_BASE = os.path.join(ICON_PATH, 'node_base.png')
 
 # DRAW STACK ORDER
+Z_VAL_BACKDROP = -2
 Z_VAL_PIPE = -1
 Z_VAL_NODE = 1
 Z_VAL_PORT = 2
@@ -164,7 +166,7 @@ class PipeEnum(Enum):
     #: default color.
     COLOR = (175, 95, 30, 255)
     #: pipe color to a node when it's disabled.
-    DISABLED_COLOR = (190, 20, 20, 255)
+    DISABLED_COLOR = (200, 60, 60, 255)
     #: pipe color when selected or mouse over.
     ACTIVE_COLOR = (70, 255, 220, 255)
     #: pipe color to a node when it's selected.

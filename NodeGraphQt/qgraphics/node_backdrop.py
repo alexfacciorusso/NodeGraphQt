@@ -1,7 +1,7 @@
 #!/usr/bin/python
 from Qt import QtGui, QtCore, QtWidgets
 
-from NodeGraphQt.constants import Z_VAL_PIPE, NodeEnum
+from NodeGraphQt.constants import Z_VAL_BACKDROP, NodeEnum
 from NodeGraphQt.qgraphics.node_abstract import AbstractNodeItem
 from NodeGraphQt.qgraphics.pipe import PipeItem
 from NodeGraphQt.qgraphics.port import PortItem
@@ -67,7 +67,7 @@ class BackdropSizer(QtWidgets.QGraphicsItem):
 
     def paint(self, painter, option, widget):
         """
-        Draws the backdrop sizer on the bottom right corner.
+        Draws the backdrop sizer in the bottom right corner.
 
         Args:
             painter (QtGui.QPainter): painter used for drawing the item.
@@ -113,7 +113,7 @@ class BackdropNodeItem(AbstractNodeItem):
 
     def __init__(self, name='backdrop', text='', parent=None):
         super(BackdropNodeItem, self).__init__(name, parent)
-        self.setZValue(Z_VAL_PIPE - 1)
+        self.setZValue(Z_VAL_BACKDROP)
         self._properties['backdrop_text'] = text
         self._min_size = 80, 80
         self._sizer = BackdropSizer(self, 26.0)
@@ -258,8 +258,16 @@ class BackdropNodeItem(AbstractNodeItem):
 
     def calc_backdrop_size(self, nodes=None):
         nodes = nodes or self.get_nodes(True)
+        if nodes:
+            nodes_rect = self._combined_rect(nodes)
+        else:
+            center = self.mapToScene(self.boundingRect().center())
+            nodes_rect = QtCore.QRectF(
+                center.x(), center.y(),
+                self._min_size[0], self._min_size[1]
+            )
+
         padding = 40
-        nodes_rect = self._combined_rect(nodes)
         return {
             'pos': [
                 nodes_rect.x() - padding, nodes_rect.y() - padding
@@ -294,3 +302,10 @@ class BackdropNodeItem(AbstractNodeItem):
     def height(self, height=0.0):
         AbstractNodeItem.height.fset(self, height)
         self._sizer.set_pos(self._width, self._height)
+
+    def from_dict(self, node_dict):
+        super().from_dict(node_dict)
+        custom_props = node_dict.get('custom') or {}
+        for prop_name, value in custom_props.items():
+            if prop_name == 'backdrop_text':
+                self.backdrop_text = value

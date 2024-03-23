@@ -15,7 +15,11 @@ class PropColorPickerRGB(BaseProperty):
         self._color = (0, 0, 0)
         self._button = QtWidgets.QPushButton()
         self._vector = PropVector3()
+        self._vector.set_steps([1, 10, 100])
+        self._vector.set_data_type(int)
         self._vector.set_value([0, 0, 0])
+        self._vector.set_min(0)
+        self._vector.set_max(255)
         self._update_color()
 
         self._button.clicked.connect(self._on_select_color)
@@ -29,7 +33,7 @@ class PropColorPickerRGB(BaseProperty):
     def _on_vector_changed(self, _, value):
         self._color = tuple(value)
         self._update_color()
-        self.value_changed.emit(self.toolTip(), value)
+        self.value_changed.emit(self.get_name(), value)
 
     def _on_select_color(self):
         current_color = QtGui.QColor(*self.get_value())
@@ -53,6 +57,15 @@ class PropColorPickerRGB(BaseProperty):
             'rgb: {}\nhex: {}'.format(self._color[:3], hex_color)
         )
 
+    def set_data_type(self, data_type):
+        """
+        Sets the input line edit fields to either display in float or int.
+
+        Args:
+            data_type(int or float): int or float data type object.
+        """
+        self._vector.set_data_type(data_type)
+
     def get_value(self):
         return self._color[:3]
 
@@ -61,7 +74,7 @@ class PropColorPickerRGB(BaseProperty):
             self._color = value
             self._update_color()
             self._update_vector()
-            self.value_changed.emit(self.toolTip(), value)
+            self.value_changed.emit(self.get_name(), value)
 
 
 class PropColorPickerRGBA(PropColorPickerRGB):
@@ -74,7 +87,11 @@ class PropColorPickerRGBA(PropColorPickerRGB):
         self._color = (0, 0, 0, 255)
         self._button = QtWidgets.QPushButton()
         self._vector = PropVector4()
+        self._vector.set_steps([1, 10, 100])
+        self._vector.set_data_type(int)
         self._vector.set_value([0, 0, 0, 255])
+        self._vector.set_min(0)
+        self._vector.set_max(255)
         self._update_color()
 
         self._button.clicked.connect(self._on_select_color)

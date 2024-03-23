@@ -19,6 +19,13 @@
       },
       {
         "type":"command",
+        "label":"Clear Session...",
+        "file":"../examples/hotkeys/hotkey_functions.py",
+        "function_name":"clear_session",
+        "shortcut":""
+      },
+      {
+        "type":"command",
         "label":"Save...",
         "file":"../examples/hotkeys/hotkey_functions.py",
         "function_name":"save_session",
@@ -99,6 +106,12 @@
         "function_name":"clear_node_selection",
         "shortcut":"Ctrl+Shift+A"
       },
+            {
+        "type":"command",
+        "label":"Invert Selection",
+        "file":"../examples/hotkeys/hotkey_functions.py",
+        "function_name":"invert_node_selection"
+      },
       {
         "type":"command",
         "label":"Enable/Disable",
@@ -112,6 +125,20 @@
         "file":"../examples/hotkeys/hotkey_functions.py",
         "function_name":"duplicate_nodes",
         "shortcut":"Alt+C"
+      },
+      {
+        "type":"command",
+        "label":"Extract",
+        "file":"../examples/hotkeys/hotkey_functions.py",
+        "function_name":"extract_nodes",
+        "shortcut":"Ctrl+Shift+X"
+      },
+      {
+        "type":"command",
+        "label":"Clear Connections",
+        "file":"../examples/hotkeys/hotkey_functions.py",
+        "function_name":"clear_node_connections",
+        "shortcut":"Ctrl+D"
       },
       {
         "type":"command",
@@ -251,21 +278,21 @@
         "label":"Curved",
         "file":"../examples/hotkeys/hotkey_functions.py",
         "function_name":"curved_pipe",
-        "shortcut":""
+        "shortcut":"Ctrl+1"
       },
       {
         "type":"command",
         "label":"Straight",
         "file":"../examples/hotkeys/hotkey_functions.py",
         "function_name":"straight_pipe",
-        "shortcut":""
+        "shortcut":"Ctrl+2"
       },
       {
         "type":"command",
         "label":"Angle",
         "file":"../examples/hotkeys/hotkey_functions.py",
         "function_name":"angle_pipe",
-        "shortcut":""
+        "shortcut":"Ctrl+3"
       }
     ]
   }

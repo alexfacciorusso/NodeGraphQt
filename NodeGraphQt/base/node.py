@@ -38,7 +38,7 @@ class NodeObject(object):
             class ExampleNode(NodeObject):
     
                 # unique node identifier domain.
-                __identifier__ = 'io.jchanvfx.github'
+                __identifier__ = 'io.github.jchanvfx'
     
                 def __init__(self):
                     ...
@@ -204,9 +204,6 @@ class NodeObject(object):
         """
         settings = self.model.to_dict[self.model.id]
         settings['id'] = self.model.id
-        if settings.get('custom'):
-            settings['widgets'] = settings.pop('custom')
-
         self.view.from_dict(settings)
 
     def serialize(self):
@@ -325,7 +322,7 @@ class NodeObject(object):
         self.set_property('selected', selected)
 
     def create_property(self, name, value, items=None, range=None,
-                        widget_type=None, tab=None):
+                        widget_type=None, widget_tooltip=None, tab=None):
         """
         Creates a custom property to the node.
 
@@ -347,11 +344,15 @@ class NodeObject(object):
                 :attr:`NodeGraphQt.constants.NodePropWidgetEnum.SLIDER`
             widget_type (int): widget flag to display in the
                 :class:`NodeGraphQt.PropertiesBinWidget`
+            widget_tooltip (str): widget tooltip for the property widget
+                displayed in the :class:`NodeGraphQt.PropertiesBinWidget`
             tab (str): name of the widget tab to display in the
                 :class:`NodeGraphQt.PropertiesBinWidget`.
         """
         widget_type = widget_type or NodePropWidgetEnum.HIDDEN.value
-        self.model.add_property(name, value, items, range, widget_type, tab)
+        self.model.add_property(
+            name, value, items, range, widget_type, widget_tooltip, tab
+        )
 
     def properties(self):
         """
@@ -393,7 +394,7 @@ class NodeObject(object):
             push_undo (bool): register the command to the undo stack. (default: True)
         """
 
-        # prevent signals from causing a infinite loop.
+        # prevent signals from causing an infinite loop.
         if self.get_property(name) == value:
             return
 

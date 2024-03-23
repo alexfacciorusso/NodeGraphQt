@@ -112,6 +112,21 @@ class NodeGraphMenu(object):
         self._items.append(menu)
         return menu
 
+    @staticmethod
+    def _set_shortcut(action, shortcut):
+        if isinstance(shortcut, str):
+            search = re.search(r'(?:\.|)QKeySequence\.(\w+)', shortcut)
+            if search:
+                shortcut = getattr(QtGui.QKeySequence, search.group(1))
+            elif all([i in ['Alt', 'Enter'] for i in shortcut.split('+')]):
+                shortcut = QtGui.QKeySequence(
+                    QtCore.Qt.ALT + QtCore.Qt.Key_Return
+                )
+            elif all([i in ['Return', 'Enter'] for i in shortcut.split('+')]):
+                shortcut = QtCore.Qt.Key_Return
+        if shortcut:
+            action.setShortcut(shortcut)
+
     def add_command(self, name, func=None, shortcut=None):
         """
         Adds a command to the menu.
@@ -129,19 +144,8 @@ class NodeGraphMenu(object):
         if LooseVersion(QtCore.qVersion()) >= LooseVersion('5.10'):
             action.setShortcutVisibleInContextMenu(True)
 
-        if isinstance(shortcut, str):
-            search = re.search(r'(?:\.|)QKeySequence\.(\w+)', shortcut)
-            if search:
-                shortcut = getattr(QtGui.QKeySequence, search.group(1))
-            elif all([i in ['Alt', 'Enter'] for i in shortcut.split('+')]):
-                shortcut = QtGui.QKeySequence(
-                    QtCore.Qt.ALT + QtCore.Qt.Key_Return
-                )
-            elif all([i in ['Return', 'Enter'] for i in shortcut.split('+')]):
-                shortcut = QtCore.Qt.Key_Return
-
         if shortcut:
-            action.setShortcut(shortcut)
+            self._set_shortcut(action, shortcut)
         if func:
             action.executed.connect(func)
         self.qmenu.addAction(action)
@@ -178,7 +182,8 @@ class NodesMenu(NodeGraphMenu):
         nodes_menu = node_graph.get_context_menu('nodes')
     """
 
-    def add_command(self, name, func=None, node_type=None, node_class=None):
+    def add_command(self, name, func=None, node_type=None, node_class=None,
+                    shortcut=None):
         """
         Re-implemented to add a command to the specified node type menu.
 
@@ -187,6 +192,7 @@ class NodesMenu(NodeGraphMenu):
             func (function): command function eg. "func(``graph``, ``node``)".
             node_type (str): specified node type for the command.
             node_class (class): specified node class for the command.
+            shortcut (str): shortcut key.
 
         Returns:
             NodeGraphQt.NodeGraphCommand: the appended command.
@@ -214,6 +220,9 @@ class NodesMenu(NodeGraphMenu):
         action.graph = self._graph
         if LooseVersion(QtCore.qVersion()) >= LooseVersion('5.10'):
             action.setShortcutVisibleInContextMenu(True)
+
+        if shortcut:
+            self._set_shortcut(action, shortcut)
         if func:
             action.executed.connect(func)
 
@@ -224,8 +233,8 @@ class NodesMenu(NodeGraphMenu):
             for menu in node_menus:
                 menu.addAction(action)
 
-        qaction = node_menu.addAction(action)
-        command = NodeGraphCommand(self._graph, qaction, func)
+        node_menu.addAction(action)
+        command = NodeGraphCommand(self._graph, action, func)
         self._commands[name] = command
         self._items.append(command)
         return command
@@ -294,3 +303,33 @@ class NodeGraphCommand(object):
         execute the menu command.
         """
         self.qaction.trigger()
+
+    def set_enabled(self, state):
+        """
+        Sets the command to either be enabled or disabled.
+
+        Args:
+            state (bool): true to enable.
+        """
+        self.qaction.setEnabled(state)
+
+    def set_hidden(self, hidden):
+        """
+        Sets then command item visibility in the context menu.
+
+        Args:
+            hidden (bool): true to hide the command item.
+        """
+        self.qaction.setVisible(not hidden)
+
+    def show(self):
+        """
+        Set the command to be visible in the context menu.
+        """
+        self.qaction.setVisible(True)
+
+    def hide(self):
+        """
+        Set the command to be hidden in the context menu.
+        """
+        self.qaction.setVisible(False)

@@ -58,15 +58,13 @@ Additional Info:
     :meth:`NodeGraphQt.NodeGraph.set_pipe_slicing`
 
 
-Getting Started
-***************
+Basic Setup
+***********
 
 Here's a basic example snippet for creating two nodes and connecting them together.
 
 .. code-block:: python
     :linenos:
-
-    import sys
 
     from Qt import QtWidgets
     from NodeGraphQt import NodeGraph, BaseNode
@@ -92,7 +90,7 @@ Here's a basic example snippet for creating two nodes and connecting them togeth
 
 
     if __name__ == '__main__':
-        app = QtWidgets.QApplication(sys.argv)
+        app = QtWidgets.QApplication([])
 
         # create node graph controller.
         graph = NodeGraph()
@@ -109,7 +107,7 @@ Here's a basic example snippet for creating two nodes and connecting them togeth
         node_b = graph.create_node('io.github.jchanvfx.FooNode', name='node B', pos=(300, 50))
 
         # connect node_a to node_b
-        node_a.set_output(0, node_b.input(2))
+        node_a.set_output(0, node_b.input(0))
 
         app.exec_()
 
